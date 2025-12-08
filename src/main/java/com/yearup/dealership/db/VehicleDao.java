@@ -20,22 +20,23 @@ public class VehicleDao {
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement statement = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, vehicle.getVin());
-            stmt.setString(2, vehicle.getMake());
-            stmt.setString(3, vehicle.getModel());
-            stmt.setInt(4, vehicle.getYear());
-            stmt.setBoolean(5, vehicle.isSold());
-            stmt.setString(6, vehicle.getColor());
-            stmt.setString(7, vehicle.getVehicleType());
-            stmt.setInt(8, vehicle.getOdometer());
-            stmt.setDouble(9, vehicle.getPrice());
+            statement.setString(1, vehicle.getVin());
+            statement.setString(2, vehicle.getMake());
+            statement.setString(3, vehicle.getModel());
+            statement.setInt(4, vehicle.getYear());
+            statement.setBoolean(5, vehicle.isSold());
+            statement.setString(6, vehicle.getColor());
+            statement.setString(7, vehicle.getVehicleType());
+            statement.setInt(8, vehicle.getOdometer());
+            statement.setDouble(9, vehicle.getPrice());
 
-            stmt.executeUpdate();
+            statement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error adding vehicle with VIN: " + vehicle.getVin(), e);
+            System.out.println("Error adding vehicle with VIN: " + vehicle.getVin());
+            e.printStackTrace();
         }
     }
 
@@ -43,44 +44,156 @@ public class VehicleDao {
         String sql = "DELETE FROM vehicles WHERE VIN = ?";
 
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement statement = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, VIN);
-            stmt.executeUpdate();
+            statement.setString(1, VIN);
+            statement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("Error removing vehicle with VIN: " + VIN, e);
+            System.out.println("Error removing vehicle with VIN: " + VIN);
+            e.printStackTrace();
         }
     }
 
     public List<Vehicle> searchByPriceRange(double minPrice, double maxPrice) {
-        // TODO: Implement the logic to search vehicles by price range
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE price BETWEEN ? AND ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setDouble(1, minPrice);
+            statement.setDouble(2, maxPrice);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by price range.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
+
 
     public List<Vehicle> searchByMakeModel(String make, String model) {
-        // TODO: Implement the logic to search vehicles by make and model
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE make = ? AND model = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setString(1, make);
+            statement.setString(2, model);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by make and model.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
+
 
     public List<Vehicle> searchByYearRange(int minYear, int maxYear) {
-        // TODO: Implement the logic to search vehicles by year range
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE year BETWEEN ? AND ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setInt(1, minYear);
+            statement.setInt(2, maxYear);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by year range.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
+
 
     public List<Vehicle> searchByColor(String color) {
-        // TODO: Implement the logic to search vehicles by color
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE color = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setString(1, color);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by color.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
+
 
     public List<Vehicle> searchByMileageRange(int minMileage, int maxMileage) {
-        // TODO: Implement the logic to search vehicles by mileage range
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE odometer BETWEEN ? AND ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setInt(1, minMileage);
+            statement.setInt(2, maxMileage);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by mileage range.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
 
+
     public List<Vehicle> searchByType(String type) {
-        // TODO: Implement the logic to search vehicles by type
-        return new ArrayList<>();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE vehicleType = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement statement = conn.prepareStatement(sql)) {
+
+            statement.setString(1, type);
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                vehicles.add(createVehicleFromResultSet(rs));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error searching vehicles by type.");
+            e.printStackTrace();
+        }
+
+        return vehicles;
     }
 
     private Vehicle createVehicleFromResultSet(ResultSet resultSet) throws SQLException {
